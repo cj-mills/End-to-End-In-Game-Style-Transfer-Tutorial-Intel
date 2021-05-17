@@ -10,7 +10,8 @@ You can fix this issue by rebuilding the Unit asset.
 2. Double-click on the `Unit` asset.
 3. Click `Build` in the pop-up window. 
 4. Close the pop-up window once the build is complete.
-5. Back in the `Assets` section, open the `Biped` scene in the `Scenes` folder. 
+5. Back in the `Assets` section, open the `Biped` scene in the `Scenes` folder.
+
 The project should run normally now. However, there might be some stuttering the first time it is run.
 
 
