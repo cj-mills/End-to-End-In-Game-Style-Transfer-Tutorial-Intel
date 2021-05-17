@@ -5,3 +5,5 @@
 
 [In-Game Style Transfer Tutorial Leveraging Unity* (Part 1)](https://software.intel.com/content/www/us/en/develop/articles/in-game-style-transfer-tutorial-leveraging-unity.html)
 
+[In-Game Style Transfer Tutorial Leveraging Unity* (Part 1.5 -Optional)](https://software.intel.com/content/www/us/en/develop/articles/in-game-style-transfer-tutorial-leveraging-unity-pt1-5.html)
+
