@@ -1,5 +1,5 @@
 # Targeted In-Game Style Transfer Tutorial
-![unity-style-transfer-gif](https://raw.githubusercontent.com/cj-mills/End-to-End-In-Game-Style-Transfer-Tutorial-Intel/main/images/tigstd-intel-480.gif)
+![unity-style-transfer-gif](https://github.com/cj-mills/End-to-End-In-Game-Style-Transfer-Tutorial-Intel/raw/targeted-style-transfer/images/tigstd-intel-480.gif)
 
 **Note:** You might get an error like the one below in Unity, if you download the project from GitHub. 
 
