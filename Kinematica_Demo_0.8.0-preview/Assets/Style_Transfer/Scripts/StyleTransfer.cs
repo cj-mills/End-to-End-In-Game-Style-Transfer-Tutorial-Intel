@@ -20,6 +20,12 @@ public class StyleTransfer : MonoBehaviour
     [Tooltip("The backend used when performing inference")]
     public WorkerFactory.Type workerType = WorkerFactory.Type.Auto;
 
+    [Tooltip("Captures the depth data for the target GameObjects")]
+    public Camera styleDepth;
+
+    [Tooltip("Captures the depth data for the entire scene")]
+    public Camera sourceDepth;
+
     // The compiled model used for performing inference
     private Model m_RuntimeModel;
 
@@ -29,6 +35,17 @@ public class StyleTransfer : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // Get the screen dimensions
+        int width = Screen.width;
+        int height = Screen.height;
+
+        // Force the StyleDepth Camera to render to a Depth texture
+        styleDepth.targetTexture = RenderTexture.GetTemporary(width, height, 24, RenderTextureFormat.Depth);
+        styleDepth.forceIntoRenderTexture = true;
+        // Force the SourceDepth Camera to render to a Depth texture
+        sourceDepth.targetTexture = RenderTexture.GetTemporary(width, height, 24, RenderTextureFormat.Depth);
+        sourceDepth.forceIntoRenderTexture = true;
+
         // Compile the model asset into an object oriented representation
         m_RuntimeModel = ModelLoader.Load(modelAsset);
 
@@ -36,11 +53,30 @@ public class StyleTransfer : MonoBehaviour
         engine = WorkerFactory.CreateWorker(workerType, m_RuntimeModel);
     }
 
+    private void Update()
+    {
+        if (styleDepth.targetTexture.width != Screen.width || styleDepth.targetTexture.height != Screen.height)
+        {
+            // Get the screen dimensions
+            int width = Screen.width;
+            int height = Screen.height;
+
+            // Assign depth textures with the new dimensions
+            styleDepth.targetTexture = RenderTexture.GetTemporary(width, height, 24, RenderTextureFormat.Depth);
+            sourceDepth.targetTexture = RenderTexture.GetTemporary(width, height, 24, RenderTextureFormat.Depth);
+        }
+    }
+
     // OnDisable is called when the MonoBehavior becomes disabled or inactive
     private void OnDisable()
     {
         // Release the resources allocated for the inference engine
         engine.Dispose();
+
+        // Release the Depth texture for the StyleDepth camera
+        RenderTexture.ReleaseTemporary(styleDepth.targetTexture);
+        // Release the Depth texture for the SourceDepth camera
+        RenderTexture.ReleaseTemporary(sourceDepth.targetTexture);
     }
 
     /// <summary>
