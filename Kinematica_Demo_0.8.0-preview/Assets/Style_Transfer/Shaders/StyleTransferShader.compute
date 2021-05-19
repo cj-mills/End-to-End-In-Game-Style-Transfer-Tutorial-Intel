@@ -1,12 +1,20 @@
 ﻿// Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel ProcessInput
 #pragma kernel ProcessOutput
+#pragma kernel Merge
 
 // Create a RenderTexture with enableRandomWrite flag and set it
 // with cs.SetTexture
 RWTexture2D<half4> Result;
 // Stores the input image and is set with cs.SetTexture
 Texture2D<half4> InputImage;
+
+// Stores the depth data from the StyleDepth camera
+Texture2D<half4> StyleDepth;
+// Stores the depth data from the SourceDepth camera
+Texture2D<half4> SrcDepth;
+// Store the original image from the current frame
+Texture2D<half4> SrcImage;
 
 [numthreads(8, 8, 1)]
 void ProcessInput(uint3 id : SV_DispatchThreadID)
@@ -22,4 +30,17 @@ void ProcessOutput(uint3 id : SV_DispatchThreadID)
     Result[id.xy] = half4((clamp(InputImage[id.xy].x, 0.0f, 255.0f) / 255.0f),
         (clamp(InputImage[id.xy].y, 0.0f, 255.0f) / 255.0f),
         (clamp(InputImage[id.xy].z, 0.0f, 255.0f) / 255.0f), 1.0h);
+}
+
+[numthreads(8, 8, 1)]
+void Merge(uint3 id : SV_DispatchThreadID)
+{
+    bool match = StyleDepth[id.xy].x == SrcDepth[id.xy].x;
+
+    if (match && (StyleDepth[id.xy].x > 0)) {
+        Result[id.xy] = half4(InputImage[id.xy].r, InputImage[id.xy].g, InputImage[id.xy].b, InputImage[id.xy].a);
+    }
+    else {
+        Result[id.xy] = half4(SrcImage[id.xy].r, SrcImage[id.xy].g, SrcImage[id.xy].b, SrcImage[id.xy].a);
+    }
 }
