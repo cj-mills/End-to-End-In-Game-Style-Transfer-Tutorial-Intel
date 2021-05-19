@@ -11,6 +11,9 @@ public class StyleTransfer : MonoBehaviour
     [Tooltip("Stylize the camera feed")]
     public bool stylizeImage = true;
 
+    [Tooltip("Stylize only specified GameObjects")]
+    public bool targetedStylization = true;
+
     [Tooltip("The height of the image being fed to the model")]
     public int targetHeight = 540;
 
@@ -114,6 +117,48 @@ public class StyleTransfer : MonoBehaviour
     }
 
     /// <summary>
+    /// Merge the stylized frame and the original frame on the GPU
+    /// </summary>
+    /// <param name="styleImage"></param>
+    /// <param name="sourceImage"></param>
+    /// <returns>The merged image</returns>
+    private void Merge(RenderTexture styleImage, RenderTexture sourceImage)
+    {
+        // Specify the number of threads on the GPU
+        int numthreads = 8;
+        // Get the index for the specified function in the ComputeShader
+        int kernelHandle = styleTransferShader.FindKernel("Merge");
+        // Define a temporary HDR RenderTexture
+        int width = styleImage.width;
+        int height = styleImage.height;
+        RenderTexture result = RenderTexture.GetTemporary(width, height, 24, RenderTextureFormat.ARGBHalf);
+        // Enable random write access
+        result.enableRandomWrite = true;
+        // Create the HDR RenderTexture
+        result.Create();
+
+        // Set the value for the Result variable in the ComputeShader
+        styleTransferShader.SetTexture(kernelHandle, "Result", result);
+        // Set the value for the InputImage variable in the ComputeShader
+        styleTransferShader.SetTexture(kernelHandle, "InputImage", styleImage);
+        // Set the value for the StyleDepth variable in the ComputeShader
+        styleTransferShader.SetTexture(kernelHandle, "StyleDepth", styleDepth.activeTexture);
+        // Set the value for the SrcDepth variable in the ComputeShader
+        styleTransferShader.SetTexture(kernelHandle, "SrcDepth", sourceDepth.activeTexture);
+        // Set the value for the SrcImage variable in the ComputeShader
+        styleTransferShader.SetTexture(kernelHandle, "SrcImage", sourceImage);
+
+        // Execute the ComputeShader
+        styleTransferShader.Dispatch(kernelHandle, result.width / numthreads, result.height / numthreads, 1);
+
+        // Copy the result into the source RenderTexture
+        Graphics.Blit(result, styleImage);
+
+        // Release the temporary RenderTexture
+        RenderTexture.ReleaseTemporary(result);
+    }
+
+    /// <summary>
     /// Stylize the provided image
     /// </summary>
     /// <param name="src"></param>
@@ -185,11 +230,25 @@ public class StyleTransfer : MonoBehaviour
     /// <param name="dest">The texture for the targer display</param>
     void OnRenderImage(RenderTexture src, RenderTexture dest)
     {
+        // Create a temporary RenderTexture to store copy of the current frame
+        RenderTexture sourceImage = RenderTexture.GetTemporary(src.width, src.height, 24, src.format);
+        // Copyt the current frame
+        Graphics.Blit(src, sourceImage);
+
         if (stylizeImage)
         {
             StylizeImage(src);
+
+            if (targetedStylization)
+            {
+                // Merge the stylized frame and origina frame
+                Merge(src, sourceImage);
+            }
         }
 
         Graphics.Blit(src, dest);
+
+        // Release the temporary RenderTexture
+        RenderTexture.ReleaseTemporary(sourceImage);
     }
 }
