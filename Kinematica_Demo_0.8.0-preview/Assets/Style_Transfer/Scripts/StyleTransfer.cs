@@ -58,6 +58,7 @@ public class StyleTransfer : MonoBehaviour
 
     private void Update()
     {
+
         if (styleDepth.targetTexture.width != Screen.width || styleDepth.targetTexture.height != Screen.height)
         {
             // Get the screen dimensions
@@ -67,6 +68,33 @@ public class StyleTransfer : MonoBehaviour
             // Assign depth textures with the new dimensions
             styleDepth.targetTexture = RenderTexture.GetTemporary(width, height, 24, RenderTextureFormat.Depth);
             sourceDepth.targetTexture = RenderTexture.GetTemporary(width, height, 24, RenderTextureFormat.Depth);
+        }
+
+        if (Input.GetMouseButtonUp(0))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit))
+            {
+                Transform[] allChildren = hit.transform.gameObject.GetComponentsInChildren<Transform>();
+
+                for (int i = 0; i < allChildren.Length; i++)
+                {
+                    MeshRenderer meshRenderer = allChildren[i].GetComponent<MeshRenderer>();
+                    if (meshRenderer != null && meshRenderer.enabled)
+                    {
+
+                        if (allChildren[i].gameObject.layer == 12)
+                        {
+                            allChildren[i].gameObject.layer = 0;
+                        }
+                        else
+                        {
+                            allChildren[i].gameObject.layer = 12;
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -201,6 +229,7 @@ public class StyleTransfer : MonoBehaviour
 
         // Execute neural network with the provided input
         engine.Execute(input);
+
         // Get the raw model output
         Tensor prediction = engine.PeekOutput();
         // Release GPU resources allocated for the Tensor
