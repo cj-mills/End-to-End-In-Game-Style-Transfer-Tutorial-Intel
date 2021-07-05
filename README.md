@@ -22,3 +22,5 @@ The project should run normally now. However, there might be some stuttering the
 [In-Game Style Transfer Tutorial Leveraging Unity* (Part 1.5 -Optional)](https://software.intel.com/content/www/us/en/develop/articles/in-game-style-transfer-tutorial-leveraging-unity-pt1-5.html)
 
 [In-Game Style Transfer Tutorial Leveraging Unity* (Part 2)](https://software.intel.com/content/www/us/en/develop/articles/in-game-style-transfer-tutorial-leveraging-part-2.html)
+
+[In-Game Style Transfer Tutorial Leveraging Unity* (Part 3)](https://software.intel.com/content/www/us/en/develop/articles/in-game-style-transfer-leveraging-unity-part-3.html)
