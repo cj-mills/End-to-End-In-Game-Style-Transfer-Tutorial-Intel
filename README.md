@@ -16,6 +16,6 @@ The project should run normally now. However, there might be some stuttering the
 
 
 ## Tutorial Links
-
+[Targeted In-Game Style Transfer Tutorial for Unity](https://software.intel.com/content/www/us/en/develop/articles/targeted-in-game-style-transfer-tutorial.html)
 
 
