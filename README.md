@@ -1,4 +1,4 @@
-# In-Game Style Transfer Tutorial Leveraging Unity
+# In-Game Style Transfer Tutorial Leveraging Unity Barracuda
 ![unity-style-transfer-gif](https://raw.githubusercontent.com/cj-mills/End-to-End-In-Game-Style-Transfer-Tutorial-Intel/main/images/igstd-intel.gif)
 
 **Note:** Complete the following steps before running the project for the first time.
